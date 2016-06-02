@@ -5,7 +5,7 @@ import (
 )
 
 var tests = []struct {
-	n int64
+	n uint64
 	s string
 }{
 	{0, "0"},
@@ -34,13 +34,23 @@ func TestDecode(t *testing.T) {
 	}
 
 	// Should return error on invalid token
-	if _, err := Decode("A-+?"); err == nil {
-		t.Errorf("Token A-+? should have caused error")
+	token := "A-+?"
+	if _, err := Decode(token); err == nil {
+		t.Errorf("%s should have caused error", token)
+	}
+
+	// Test overflow
+	tokens := [2]string{"IENJOYEDHalo3ANDPortal2ANDSOMEOTHERGAMES", "lYGhA16ahyg"}
+	for _, tt := range tokens {
+		_, err := Decode(tt)
+		if err == nil || err.Error() != "value out of range" {
+			t.Errorf("%s should have caused out of range error", token)
+		}
 	}
 }
 
 func BenchmarkEncode(b *testing.B) {
-	encodeValues := [6]int64{7, 117, 343, 2401, 823543, 300124211606973}
+	encodeValues := [6]uint64{7, 117, 343, 2401, 823543, 300124211606973}
 	for i := 0; i < b.N; i++ {
 		Encode(encodeValues[i%6])
 	}

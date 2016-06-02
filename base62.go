@@ -4,12 +4,14 @@ import (
 	"errors"
 )
 
-// characters used for conversion
-const alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const (
+	alphabet  = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	maxUint64 = (1<<64 - 1)
+)
 
 // converts n to base62
-func Encode(n int64) string {
-	chars := [12]byte{} // log base 62 (2^64) is around 10.7
+func Encode(n uint64) string {
+	chars := [12]byte{} // log base 62 (2^64-1) is around 10.7
 
 	i := 12
 	for n >= 62 {
@@ -26,7 +28,7 @@ func Encode(n int64) string {
 }
 
 // converts base62 token to int
-func Decode(token string) (int64, error) {
+func Decode(token string) (uint64, error) {
 	var n uint64 = 0
 
 	for i := 0; i < len(token); i++ {
@@ -40,11 +42,21 @@ func Decode(token string) (int64, error) {
 		case 'A' <= d && d <= 'Z':
 			v = d - 'A' + 36
 		default:
-			return 0, errors.New("Invalid token string to decode")
+			return 0, errors.New("invalid token")
 		}
+
+		n1 := n
 		n *= 62
-		n += uint64(v)
+		if n < n1 {
+			return maxUint64, errors.New("value out of range")
+		}
+
+		n1 = n + uint64(v)
+		if n1 < n {
+			return maxUint64, errors.New("value out of range")
+		}
+		n = n1
 	}
 
-	return int64(n), nil
+	return n, nil
 }
