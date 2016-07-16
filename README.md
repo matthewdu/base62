@@ -1,5 +1,7 @@
 # base62
 
+[![CircleCI](https://circleci.com/gh/matthewdu/base62.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/matthewdu/base62)
+
 Convert to and from `uint64` into base62 `string`. Useful for shortening long integer IDs.
 I personally use for Google Cloud Datastore IDs.
 
