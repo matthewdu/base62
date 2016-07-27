@@ -6,7 +6,7 @@ import (
 
 const (
 	alphabet  = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	maxUint64 = (1<<64 - 1)
+	maxUint64 = (1<<64) - 1
 )
 
 // converts n to base62
